@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:minimal_task/screens/home_page.dart';
 
-void main() => runApp(MyApp());
+import 'services/set_data.dart';
+import 'utils/shared_prefs.dart';
+
+final sharedPrefs = SharedPrefs();
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await sharedPrefs.init();
+  if (sharedPrefs.isFirst) {
+    if (sharedPrefs.isDataSet) {
+      SetData.assign();
+      sharedPrefs.isDataSet = true;
+    }
+  }
+  runApp(
+    MyApp(),
+  );
+}
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Starter Project',
-      home: Scaffold(
-        body: Container(),
+      debugShowCheckedModeBanner: false,
+      title: 'Minimal Task',
+      theme: ThemeData(
+        textTheme: GoogleFonts.nunitoSansTextTheme(
+          Theme.of(context).textTheme,
+        ),
+      ),
+      home: HomePage(
+        sharedPrefs: sharedPrefs,
       ),
     );
   }
